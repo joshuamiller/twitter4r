@@ -282,7 +282,7 @@ describe Twitter::Status, ".create" do
   end
   
   it "should invoke #status(:post, text) on client context given" do
-    @twitter.should_receive(:status).with(:post, @text).and_return(@status)
+    @twitter.should_receive(:status).with(:post, @text, :in_reply_to_status_id => nil).and_return(@status)
     Twitter::Status.create(:text => @text, :client => @twitter)
   end
   
@@ -308,6 +308,13 @@ describe Twitter::Status, ".create" do
   it "should raise an ArgumentError when client context given in params is not a Twitter::Client object" do
     lambda {
     	Twitter::Status.create(:client => 'a string instead of a Twitter::Client', :text => @text)
+    }.should raise_error(ArgumentError)
+  end
+  
+  it "should raise an ArgumentError if in_reply_status_id is given but not an Integer" do
+    @in_reply_to_status_id = 2394323
+    lambda {
+      Twitter::Status.create(:text => @text, :client => @client, :in_reply_to_status_id => "abcd")
     }.should raise_error(ArgumentError)
   end
   

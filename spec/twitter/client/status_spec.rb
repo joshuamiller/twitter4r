@@ -85,7 +85,14 @@ describe Twitter::Client, "#status" do
       @twitter.status(:crap, nil)
     }.should raise_error(ArgumentError)
   end
-    
+  
+  it "should create the in_reply_to_status_id parameter when created with reply" do
+    @twitter.should_receive(:create_http_post_request).with(@uris[:post]).and_return(@request)
+    @connection.should_receive(:request).with(@request, {:status => @message, :source => @source, 
+      :in_reply_to_status_id => 2349343}.to_http_str).and_return(@response)
+    @status_with_reply_to = Twitter::Status.create(:text => @message, :client => @twitter, :in_reply_to_status_id => 2349343)
+  end    
+  
   after(:each) do
     nilize(@twitter)
   end

@@ -257,10 +257,11 @@ module Twitter
       # The Twitter::Status object returned after the status successfully
       # updates on the Twitter server side is returned from this method.
       def create(params)
-      	client, text = params[:client], params[:text]
+      	client, text, in_reply_to_status_id = params[:client], params[:text], params[:in_reply_to_status_id]
       	raise ArgumentError, 'Valid client context must be provided' unless client.is_a?(Twitter::Client)
       	raise ArgumentError, 'Must provide text for the status to update' unless text.is_a?(String)
-      	client.status(:post, text)
+      	raise ArgumentError, 'Must provide integer for in_reply_to_status_id' if (in_reply_to_status_id && !(in_reply_to_status_id.is_a? Integer))
+      	client.status(:post, text, {:in_reply_to_status_id => in_reply_to_status_id})
       end
     end
 
